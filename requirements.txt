@@ -19,6 +19,7 @@ Jinja2==3.1.2
 Markdown==3.4.3
 MarkupSafe==2.1.2
 oauthlib==3.2.2
+psycopg2-binary==2.9.6
 pycodestyle==2.10.0
 pycparser==2.21
 PyJWT==2.6.0
