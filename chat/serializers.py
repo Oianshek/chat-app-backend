@@ -3,15 +3,17 @@ from rest_framework.validators import UniqueValidator
 from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
 
-from models import *
+from chat.models import *
 
 
-class RegistrationSerializer(serializers.ModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
 
     email = serializers.EmailField(
         required=True,
         validators=[UniqueValidator(queryset=User.objects.all())]
     )
+    first_name = serializers.CharField(required=True)
+    last_name = serializers.CharField(required=True)
     password = serializers.CharField(
         write_only=True, required=True, validators=[validate_password])
     re_password = serializers.CharField(write_only=True, required=True)
@@ -20,11 +22,6 @@ class RegistrationSerializer(serializers.ModelSerializer):
         model = User
         fields = ('email', 'first_name', 'last_name',
                   'password', 're_password')
-        extra_kwargs = {
-            'first_name': {'required': True},
-            'last_name': {'required': True},
-            'password': {'write_only': True}
-        }
 
     def validate(self, attrs):
         if attrs['password'] != attrs['re_password']:

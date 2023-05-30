@@ -1,19 +1,17 @@
-from rest_framework.permissions import AllowAny
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from rest_framework import status
+from rest_framework.viewsets import ModelViewSet
+from rest_framework import permissions
 
-from .serializers import *
+from chat.models import User
+from chat.serializers import UserSerializer
 
 
-class RegisterApiView(APIView):
-    permission_classes = [AllowAny]
+class UserViewSet(ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
 
-    def post(self, request):
-        serializer = RegistrationSerializer(data=request.data)
-        if serializer.is_valid():
-            user = serializer.save()
-            if user:
-                json = serializer.data
-                return Response(json, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors,  status=status.HTTP_400_BAD_REQUEST)
+    def get_permissions(self):
+        if self.action in ['update', 'partial_update', 'destroy']:
+            permission_classes = [permissions.IsAuthenticated]
+        else:
+            permission_classes = [permissions.AllowAny]
+        return [permission() for permission in permission_classes]

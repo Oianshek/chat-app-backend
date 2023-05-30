@@ -2,18 +2,19 @@ version: '3'
 
 services:
 
-  backend:
+  api:
     build: .
-    command: bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    command: bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8001"
     container_name: chat_app
     volumes:
       - .:/chat_app
     ports:
       - "8001:8001"
-    networks:
-      - backend
     depends_on:
       - postgres
+    env_file:
+      - .env
+    restart: always
 
   postgres:
     platform: linux/amd64
@@ -26,9 +27,15 @@ services:
       - '5432:5432'
     volumes:
       - ./data:/var/lib/postgresql/data
-    networks:
-      - backend
 
-  networks:
-    backend:
-      driver: bridge
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    restart: always
+    ports:
+      - '5050:80'
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=oiansheks@gmail.com
+      - PGADMIN_DEFAULT_PASSWORD=oianshek
+    volumes:
+      - ./pgadmin:/var/lib/pgadmin
